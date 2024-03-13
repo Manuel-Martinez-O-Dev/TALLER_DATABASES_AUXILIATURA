@@ -1,0 +1,213 @@
+        Base de Datos Colegio
+
+    Diseño de una Base de Datos para un Colegio
+
+Fase 1: Identificación de Entidades y Atributos
+
+    Estudiante (Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion,    Telefono, Grado, Tutor, Calificacion)
+
+    Profesor (Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion,    Telefono, Correo_electronico, Materia, Horario)
+
+    Administrativo (Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion, Telefono, Correo_electronico, Puesto, Departamento, Horario)
+
+    Materia (Nombre, Horario, Profesor)
+
+    Aula (Capacidad, Tipo)
+
+    Calificaciones (Estudiante, Materia, Nota)
+
+Fase 2: Normalización de la Base de Datos
+
+    (1NF)
+
+        Estudiante (ID_Estudiante, Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion, Telefono, ID_Tutor)
+
+        Tutor (ID_Tutor, Nombre, Apellido, Fecha_de_nacimiento, Telefono, Genero, Direccion)
+
+        Profesor (ID_Profesor, Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion, Telefono, Correo_electronico, ID_Materia)
+
+        Materia (ID_Materia, Nombre, Grado, Horario)
+
+        Administrativo (ID_Administrativo, Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion, Telefono, Correo_electronico, Puesto, Departamento, Horario)
+
+        Aula (ID_Aula, Capacidad, Tipo_de_aula)
+
+        Calificaciones (ID_Estudiante, ID_Materia, Nota)
+
+    (2NF)
+
+        Estudiante (ID_Estudiante, Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion, Telefono, ID_Tutor)
+
+        Cursa (ID_Estudiante, ID_Materia, Asistencia)
+
+        Tutor (ID_Tutor, Nombre, Apellido, Fecha_de_nacimiento, Telefono, Genero, Direccion)
+
+        Profesor (ID_Profesor, Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion, Telefono, Correo_electronico)
+
+        Imparte (ID_Profesor, ID_Materia, ID_Aula, Horario)
+
+        Materia (ID_Materia, Nombre, Grado)
+
+        Administrativo (ID_Administrativo, Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion, Telefono, Correo_electronico,Puesto, Horario, ID_Departamento)
+
+        Departamento (ID_Departamento, Nombre)
+
+        Aula (ID_Aula, Capacidad, Tipo_de_aula)
+
+        Calificaciones (ID_Estudiante, ID_Materia, Nota)
+
+    (3NF)
+
+        La Base de Datos ya se encuentra en la 3NF.
+
+Fase 3: Creación de Diagrama Entidad-Relación
+
+    ver (E-R.png).
+    
+Fase 4: Creación de la Base de Datos en posgreSQL
+
+    CREATE DATABASE colegio;
+
+    CREATE TABLE Departamento (
+        ID_Departamento SERIAL PRIMARY KEY,
+        Nombre VARCHAR(100)
+    );
+
+    CREATE TABLE Tutor (
+        ID_Tutor SERIAL PRIMARY KEY,
+        Nombre VARCHAR(100),
+        Apellido VARCHAR(100),
+        Fecha_de_nacimiento DATE,
+        Telefono VARCHAR(20),
+        Genero VARCHAR(10),
+        Direccion VARCHAR(255)
+    );
+
+    CREATE TABLE Profesor (
+        ID_Profesor SERIAL PRIMARY KEY,
+        Nombre VARCHAR(100),
+        Apellido VARCHAR(100),
+        Fecha_de_nacimiento DATE,
+        Genero VARCHAR(10),
+        Direccion VARCHAR(255),
+        Telefono VARCHAR(20),
+        Correo_electronico VARCHAR(100)
+    );
+
+    CREATE TABLE Materia (
+        ID_Materia SERIAL PRIMARY KEY,
+        Nombre VARCHAR(100),
+        Grado VARCHAR(20)
+    );
+
+    CREATE TABLE Aula (
+        ID_Aula SERIAL PRIMARY KEY,
+        Capacidad INTEGER,
+        Tipo_de_aula VARCHAR(100)
+    );
+
+    CREATE TABLE Administrativo (
+        ID_Administrativo SERIAL PRIMARY KEY,
+        Nombre VARCHAR(100),
+        Apellido VARCHAR(100),
+        Fecha_de_nacimiento DATE,
+        Genero VARCHAR(10),
+        Direccion VARCHAR(255),
+        Telefono VARCHAR(20),
+        Correo_electronico VARCHAR(100),
+        Puesto VARCHAR(100),
+        Horario VARCHAR(100),
+        ID_Departamento INTEGER,
+        FOREIGN KEY (ID_Departamento) REFERENCES Departamento(ID_Departamento)
+    );
+
+    CREATE TABLE Estudiante (
+        ID_Estudiante SERIAL PRIMARY KEY,
+        Nombre VARCHAR(100),
+        Apellido VARCHAR(100),
+        Fecha_de_nacimiento DATE,
+        Genero VARCHAR(10),
+        Direccion VARCHAR(255),
+        Telefono VARCHAR(20),
+        ID_Tutor INTEGER,
+        FOREIGN KEY (ID_Tutor) REFERENCES Tutor(ID_Tutor)
+    );
+
+    CREATE TABLE Calificaciones (
+        ID_Estudiante INTEGER,
+        ID_Materia INTEGER,
+        Nota FLOAT,
+        FOREIGN KEY (ID_Estudiante) REFERENCES Estudiante(ID_Estudiante),
+        FOREIGN KEY (ID_Materia) REFERENCES Materia(ID_Materia)
+    );
+
+    CREATE TABLE Cursa (
+        ID_Estudiante INTEGER,
+        ID_Materia INTEGER,
+        Asistencia VARCHAR(3),
+        FOREIGN KEY (ID_Estudiante) REFERENCES Estudiante(ID_Estudiante),
+        FOREIGN KEY (ID_Materia) REFERENCES Materia(ID_Materia)
+    );
+
+    CREATE TABLE Imparte (
+        ID_Profesor INTEGER,
+        ID_Materia INTEGER,
+        ID_Aula INTEGER,
+        Horario VARCHAR(100),
+        FOREIGN KEY (ID_Profesor) REFERENCES Profesor(ID_Profesor),
+        FOREIGN KEY (ID_Materia) REFERENCES Materia(ID_Materia),
+        FOREIGN KEY (ID_Aula) REFERENCES Aula(ID_Aula)
+    );
+
+
+Extra: Datos(Opcional)
+
+    INSERT INTO Departamento (Nombre) VALUES
+        ('Departamento de Matemáticas'),
+        ('Departamento de Ciencias Sociales'),
+        ('Departamento de Lenguas Extranjeras');
+
+    INSERT INTO Tutor (Nombre, Apellido, Fecha_de_nacimiento, Telefono, Genero, Direccion) VALUES
+        ('Juan', 'Perez', '1980-05-15', '123456789', 'Masculino', 'Calle 123, Ciudad'),
+        ('Maria', 'Gonzalez', '1975-10-20', '987654321', 'Femenino', 'Av. Principal 456'),
+        ('Pedro', 'Lopez', '1982-03-25', '555555555', 'Masculino', 'Carrera 789, Pueblo');
+
+    INSERT INTO Profesor (Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion, Telefono, Correo_electronico) VALUES
+        ('Ana', 'Martinez', '1978-08-12', 'Femenino', 'Calle 456, Ciudad', '111222333', 'ana.martinez@example.com'),
+        ('Javier', 'Garcia', '1985-06-30', 'Masculino', 'Av. Central 789', '444555666', 'javier.garcia@example.com'),
+        ('Laura', 'Rodriguez', '1989-11-03', 'Femenino', 'Carrera 321, Pueblo', '777888999', 'laura.rodriguez@example.com');
+
+    INSERT INTO Materia (Nombre, Grado) VALUES
+        ('Matemáticas', '10'),
+        ('Historia', '11'),
+        ('Inglés', '9');
+
+    INSERT INTO Aula (Capacidad, Tipo_de_aula) VALUES
+        (30, 'Salón de clases'),
+        (20, 'Laboratorio de computación'),
+        (40, 'Salón de conferencias');
+
+    INSERT INTO Administrativo (Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion, Telefono, Correo_electronico, Puesto, Horario, ID_Departamento) VALUES
+        ('Carlos', 'Lopez', '1983-04-18', 'Masculino', 'Calle 789, Ciudad', '666777888', 'carlos.lopez@example.com', 'Secretario', '8:00 - 17:00', 1),
+        ('Elena', 'Sánchez', '1970-12-05', 'Femenino', 'Av. Principal 987', '999000111', 'elena.sanchez@example.com', 'Contador', '9:00 - 18:00', 2),
+        ('Roberto', 'Gomez', '1980-09-22', 'Masculino', 'Carrera 456, Pueblo', '123123123', 'roberto.gomez@example.com', 'Recepcionista', '10:00 - 19:00', 3);
+
+    INSERT INTO Estudiante (Nombre, Apellido, Fecha_de_nacimiento, Genero, Direccion, Telefono, ID_Tutor) VALUES
+        ('Pedro', 'Ramirez', '2005-03-10', 'Masculino', 'Calle 101, Ciudad', '555111222', 1),
+        ('María', 'López', '2004-07-25', 'Femenino', 'Av. Principal 123', '999888777', 2),
+        ('Luis', 'Martínez', '2006-01-05', 'Masculino', 'Carrera 789, Pueblo', '333444555', 3);
+
+    INSERT INTO Calificaciones (ID_Estudiante, ID_Materia, Nota) VALUES
+        (1, 1, 85),
+        (2, 2, 90),
+        (3, 3, 78);
+
+    INSERT INTO Cursa (ID_Estudiante, ID_Materia, Asistencia) VALUES
+        (1, 1, 1),
+        (2, 2, 1),
+        (3, 3, 1);
+
+    INSERT INTO Imparte (ID_Profesor, ID_Materia, ID_Aula, Horario) VALUES
+        (1, 1, 1, 'Lunes 8:00 - 10:00'),
+        (2, 2, 2, 'Martes 10:00 - 12:00'),
+        (3, 3, 3, 'Miércoles 8:00 - 10:00');
